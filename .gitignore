@@ -1,0 +1,68 @@
+### Laravel Backend ###
+*.log
+.DS_Store
+.env
+.env.backup
+.env.local
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+### React/Vite Frontend ###
+web/node_modules
+web/dist
+web/.env.local
+web/.env.*.local
+web/.vite-temp
+
+### Build & Cache ###
+*.cache
+.cache
+.vscode-test
+.eslintcache
+
+### OS ###
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+### IDE ###
+.vscode
+.idea
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+### Proxy Service ###
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+htmlcov/
