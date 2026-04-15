@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             'password' => 'password',
         ]);
 
-        $this->call(ClassifiedUrlSeeder::class);
+        $this->call([
+            ClassifiedUrlSeeder::class,
+            DummyDataSeeder::class,
+        ]);
     }
 }

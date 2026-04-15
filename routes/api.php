@@ -23,6 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('child', ChildController::class);
 
     Route::prefix('classified-url')->group(function () {
+        Route::get('/', [ClassifiedUrlController::class, 'index']);
+        Route::post('/', [ClassifiedUrlController::class, 'store']);
+        Route::put('/{id}', [ClassifiedUrlController::class, 'update']);
+        Route::delete('/{id}', [ClassifiedUrlController::class, 'destroy']);
         Route::get('/dangerous-website', [ClassifiedUrlController::class, 'dangerousWebsite']);
         Route::get('/dangerous-website/{userId}', [ClassifiedUrlController::class, 'dangerousWebsiteByUser']);
     });

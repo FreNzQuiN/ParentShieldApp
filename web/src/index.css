@@ -157,6 +157,11 @@ button.ghost {
   padding: 1rem;
 }
 
+.panel-stack {
+  display: grid;
+  gap: 0.85rem;
+}
+
 .panel h2 {
   margin: 0 0 0.8rem;
   font-size: 1rem;
@@ -173,6 +178,10 @@ button.ghost {
   flex-wrap: wrap;
   gap: 0.45rem;
   margin-top: 0.85rem;
+}
+
+.chips-tight {
+  margin-top: 0.55rem;
 }
 
 .chip-wrap {
@@ -196,6 +205,44 @@ button.ghost {
   padding-inline: 0.5rem;
   background: #fbe8db;
   color: #66321f;
+}
+
+.blocked-list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.blocked-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.42rem 0;
+  border-bottom: 1px solid #f0e5d5;
+}
+
+.blocked-row span {
+  overflow-wrap: anywhere;
+}
+
+.blocked-row input {
+  min-width: 0;
+  width: 100%;
+}
+
+.blocked-actions {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.action-group {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
 }
 
 .table-wrap {

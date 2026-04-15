@@ -46,6 +46,13 @@ export type SummaryPayload = {
   persentageDangerousWebsite: number
 }
 
+export type BlockedWebsiteItem = {
+  id: string
+  url: string
+  isGlobal: boolean
+  label: string
+}
+
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
 })
@@ -105,4 +112,39 @@ export async function updateGrantAccess(token: string, logId: string, grantAcces
       headers: { Authorization: `Bearer ${token}` },
     },
   )
+}
+
+export async function getBlockedWebsites(token: string): Promise<BlockedWebsiteItem[]> {
+  const response = await api.get('/classified-url', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  return response.data.data
+}
+
+export async function addBlockedWebsite(token: string, url: string): Promise<BlockedWebsiteItem> {
+  const response = await api.post(
+    '/classified-url',
+    { url },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  )
+  return response.data.data
+}
+
+export async function updateBlockedWebsite(token: string, id: string, url: string): Promise<BlockedWebsiteItem> {
+  const response = await api.put(
+    `/classified-url/${id}`,
+    { url },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  )
+  return response.data.data
+}
+
+export async function deleteBlockedWebsite(token: string, id: string): Promise<void> {
+  await api.delete(`/classified-url/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
 }
