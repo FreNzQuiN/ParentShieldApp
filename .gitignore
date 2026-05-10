@@ -1,0 +1,20 @@
+# Database & Temp Files
+/parentshield_db
+.env
+.env.backup
+/node_modules
+/vendor
+
+# Laravel Specific
+/storage/*.key
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+/bootstrap/cache/*
+
+# IDE & OS Files
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
