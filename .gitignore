@@ -13,6 +13,10 @@
 /storage/logs/*
 /bootstrap/cache/*
 
+# Build & Test Artifacts
+/public/build
+.phpunit.result.cache
+
 # IDE & OS Files
 .vscode/
 .idea/
