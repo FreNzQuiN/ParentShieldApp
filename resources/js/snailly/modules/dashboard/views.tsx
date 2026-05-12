@@ -34,13 +34,14 @@ import {
   sDashboardChartHeader,
   sDashboardPie,
   sDashboardViz,
+  sDatePicker,
   sDatePickerPieChart,
   sDashboardButtonLock,
   sActionButton,
   sLogDeleteButton,
   sLogModalButton,
 } from "./styles";
-import { calculateGoodPercentage, getStatusComponent } from './helpers';
+import { getStatusComponent } from './helpers';
 import { LockClosed, LockOpen } from '@/assets/lockaccess';
 
 const DashboardViews = ({
@@ -48,39 +49,39 @@ const DashboardViews = ({
   linkOpenHandler,
   logActivity,
   listOfSummary,
-  listStatisticYear,
   listStatisticMonth,
   date,
-  year,
   logId,
   grantAccess,
   setLogId,
   setGrantAccess,
   url,
   dateChangeHandler,
-  yearChangeHandler,
   updateGrantAccess,
   openEditModalHandler,
   closeEditModalHandler,
   isEditModalOpen
 }: DashboardViewsProps) => {
-  const dataYear = listStatisticYear.map((item) => {
+  const dataMonth = listStatisticMonth.map((item) => {
     return {
-      month: item.month,
-      Good: item.Good,
-      Bad: item.Bad,
+      day: item.day,
+      Good: Number(item.Good) || 0,
+      Bad: Number(item.Bad) || 0,
     };
   })
 
-  const dataMonth = listStatisticMonth.map((item) => {    
-    return {
-      name: item.name,
-      value: item.name === "Good" && item.value === 0 ? 1 : item.value,
-      fill: item.name === "Good" ? "#FFBC57" : "#FF5757",
-    };
-  })
+  const totalGood = dataMonth.reduce((total, item) => total + item.Good, 0);
+  const totalBad = dataMonth.reduce((total, item) => total + item.Bad, 0);
+  const totalMonthlyAccess = totalGood + totalBad;
+  const goodPercentage = totalMonthlyAccess ? Math.round((totalGood / totalMonthlyAccess) * 100) : 0;
+  const pieData = totalMonthlyAccess
+    ? [
+        { name: 'Good', value: totalGood, fill: '#FFBC57' },
+        { name: 'Bad', value: totalBad, fill: '#FF5757' },
+      ]
+    : [{ name: 'No Data', value: 1, fill: '#B8B8B8' }];
 
-  const renderPieChartLabel = (props) => {
+  const renderPieChartLabel = (props: any) => {
     const { cx, cy } = props;
     return (
       <text
@@ -89,10 +90,10 @@ const DashboardViews = ({
         dy={8}
         textAnchor="middle"
         fill="#fff"
-        fontSize={32}
-        fontWeight={700}
+        fontSize={totalMonthlyAccess ? 28 : 16}
+        fontWeight={600}
       >
-        {props.name === 'Good' ? `${calculateGoodPercentage(dataMonth)}%` : ''}
+        {totalMonthlyAccess ? `${goodPercentage}%` : 'No Data'}
       </text>
     );
   };
@@ -126,7 +127,7 @@ const DashboardViews = ({
         <div className={sDashboardContent}>
           <section className={sDashboardCardSection}>
             <Card title="Total Accessed Content" icon={<Globe />}>
-              {listOfSummary.totalSafeWebsite + listOfSummary.totalDangerousWebsite}
+              {Number(listOfSummary.totalSafeWebsite) + Number(listOfSummary.totalDangerousWebsite)}
             </Card>
             <Card title="Total Positive Content" icon={<SmileFace />} variant="positive">
               {listOfSummary.totalSafeWebsite}
@@ -140,20 +141,31 @@ const DashboardViews = ({
             <div className={sDashboardChart}>
               <div className={sDashboardChartHeader}>
                 <Paragraph variant="l" weight="semibold">
-                  Statistics Accessed Content
+                  Statistics Accessed Content By Selected Month
                 </Paragraph>
-                <DatePicker views={["year"]} label="Choose year" onChange={yearChangeHandler} value={moment(year)} />
+                <DatePicker
+                  views={["month", "year"]}
+                  label="Choose month"
+                  className={sDatePicker}
+                  onChange={dateChangeHandler}
+                  value={moment(date)}
+                  slotProps={{
+                    popper: {
+                      sx: { zIndex: 900 }
+                    }
+                  }}
+                />
               </div>
 
               <ResponsiveContainer width="99%" height={400}>
-                <BarChart data={dataYear}>
+                <BarChart data={dataMonth}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" dy={30} height={70} tickFormatter={(tick) => tick.substring(0, 3)} />
+                  <XAxis dataKey="day" dy={30} height={70} interval={2} />
                   <YAxis />
                   <Tooltip />
                   <Legend verticalAlign="top" wrapperStyle={{ lineHeight: "40px" }} />
-                  <Bar dataKey="Good" fill="#4E773F" />
-                  <Bar dataKey="Bad" fill="#FF5757" />
+                  <Bar dataKey="Good" stackId="access" fill="#4E773F" />
+                  <Bar dataKey="Bad" stackId="access" fill="#FF5757" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -161,20 +173,13 @@ const DashboardViews = ({
               <Paragraph variant="l" weight="semibold" white>
                 Monthly Percentage
               </Paragraph>
-              <DatePicker
-                  views={["month", "year"]}
-                  label="Choose month"
-                  className={sDatePickerPieChart}
-                  onChange={dateChangeHandler}
-                  value={moment(date)}
-              />
               <PieChart width={170} height={250}>
                   <Legend
                     verticalAlign="top"
                     formatter={(value, _entry, _payload) => <span style={{ color: "#fff" }}>{value}</span>}
                   />
                    <Pie
-                    data={dataMonth}
+                    data={pieData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
@@ -187,7 +192,7 @@ const DashboardViews = ({
                   />
               </PieChart>
               <Paragraph variant="m" white>
-                Your child accessed {calculateGoodPercentage(dataMonth)}% positive content
+                {totalMonthlyAccess ? `Your child accessed ${goodPercentage}% positive content` : 'No Data'}
               </Paragraph>
             </div>
           </div>

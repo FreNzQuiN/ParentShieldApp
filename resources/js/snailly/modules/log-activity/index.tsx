@@ -46,12 +46,8 @@ const LogActivityModule = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [logId, setLogId] = useState<string>('');
   const [url, setUrl] = useState<string>('');
-  const [valueMonth, setValueMonth] = useState<MomentInput>(
-    moment().format('YYYY-MM')
-  );
-  const [valueDay, setValueDay] = useState<MomentInput>(
-    moment().format('YYYY-MM-DD')
-  );
+  const [valueMonth, setValueMonth] = useState<Moment>(moment());
+  const [valueDay, setValueDay] = useState<Moment>(moment());
 
   const state = {
     user: zustand((zustandState) => zustandState.user),
@@ -85,10 +81,9 @@ const LogActivityModule = () => {
 
   const getLogDataByDaily = async (page: number = 1, limit: number = 10) => {
     setIsLoading(true);
-    const momentValue = valueDay;
-    const monthValue = moment(momentValue).month();
-    const yearValue = moment(momentValue).year();
-    const dayValue = moment(momentValue).date();
+    const monthValue = valueDay.month() + 1;
+    const yearValue = valueDay.year();
+    const dayValue = valueDay.date();
 
     try {
       const response = await axiosGet(
@@ -122,9 +117,8 @@ const LogActivityModule = () => {
     year = moment().year()
   ) => {
     setIsLoading(true);
-    const momentValue = valueMonth;
-    const monthValue = moment(momentValue).month();
-    const yearValue = moment(momentValue).year();
+    const monthValue = valueMonth.month() + 1;
+    const yearValue = valueMonth.year();
     try {
       const response = await axiosGet(
         `/log/${state.selectedChildId || 'ALL'}?period=${activeTab}`,
@@ -198,14 +192,16 @@ const LogActivityModule = () => {
     setIsEditModalOpen(false);
   };
 
-  const dateChangeHandler = (date: Moment) => {
-    const formatedDate = date.format('YYYY-MM');
-    setValueMonth(formatedDate);
+  const dateChangeHandler = (date: Moment | null) => {
+    if (date) {
+      setValueMonth(date);
+    }
   };
 
-  const dateChangeHandlerDaily = (date: Moment) => {
-    const formatedDate = date.format('YYYY-MM-DD');
-    setValueDay(formatedDate);
+  const dateChangeHandlerDaily = (date: Moment | null) => {
+    if (date) {
+      setValueDay(date);
+    }
   };
 
   const linkOpenHandler = (url: string) => {
@@ -258,7 +254,7 @@ const LogActivityModule = () => {
               onChange={dateChangeHandler}
               views={['month', 'year']}
               label="Choose Month"
-              value={moment(valueMonth)}
+              value={valueMonth}
             />
           )}
           {activeTab === 'daily' && (
@@ -266,7 +262,7 @@ const LogActivityModule = () => {
               onChange={dateChangeHandlerDaily}
               views={['day', 'month', 'year']}
               label="Choose Date"
-              value={moment(valueDay)}
+              value={valueDay}
             />
           )}
           <div style={{marginLeft: 'auto'}}>

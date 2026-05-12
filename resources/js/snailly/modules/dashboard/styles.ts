@@ -68,12 +68,18 @@ export const sDashboardChart = css`
   background: rgba(255, 255, 255, 0.85);
   box-shadow: 0px 10px 28px rgba(16, 24, 40, 0.06);
   flex: 1;
+
+  @media (max-width: 900px) {
+    padding: 18px;
+  }
 `;
 
 export const sDashboardChartHeader = css`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
   padding-bottom: 20px;
 `;
 
@@ -83,11 +89,16 @@ export const sDashboardPie = css`
   flex-direction: column;
   align-items: center;
   background: linear-gradient(180deg, #4e773f 0%, #416434 100%);
-  min-height: 500px;
+  min-height: 420px;
   padding: 24px 20px;
   width: 300px;
   border-radius: 20px;
   text-align: center;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    min-height: 360px;
+  }
 `;
 
 export const sDashboardViz = css`
@@ -96,6 +107,11 @@ export const sDashboardViz = css`
   align-items: center;
   gap: 20px;
   flex-wrap: wrap;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 export const sTableLeft = css`
@@ -115,6 +131,10 @@ export const sTableLink = css`
 export const sDatePicker = css`
   background-color: rgba(255, 255, 255, 0.72);
   border-radius: 12px;
+
+  .MuiDatePickersPopper-root {
+    z-index: 900 !important;
+  }
 `;
 
 export const sDatePickerPieChart = css`
@@ -123,6 +143,16 @@ export const sDatePickerPieChart = css`
 
   input, svg, label {
     color: #fff;
+  }
+
+  .MuiDatePickersPopper-root {
+    z-index: 900 !important;
+  }
+`;
+
+export const sDashboardDatePickerWrapper = css`
+  .MuiDatePickersPopper-root {
+    z-index: 1001 !important;
   }
 `;
 

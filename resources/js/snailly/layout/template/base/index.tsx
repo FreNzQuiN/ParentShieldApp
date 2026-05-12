@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components';
@@ -15,6 +16,10 @@ import {
   sBaseHeader,
   sBaseContent,
   sBaseNavigation,
+  sBaseSidebarOpen,
+  sBaseSidebarToggle,
+  sBaseSidebarToggleBar,
+  sBaseSidebarOverlay,
   sBaseHeaderTitle,
   sBaseNavigationLogo,
   sBaseNavigationList,
@@ -29,7 +34,22 @@ import SelectChild from '@/components/selectChild';
 const Base = ({ title, children }: BaseProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { setUser, setChildrenList, setSelectedChildId } = zustand();
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 900) {
+        setIsSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const logOutButtonHandler = async () => {
     try {
@@ -45,7 +65,15 @@ const Base = ({ title, children }: BaseProps) => {
 
   return (
     <div className={sBase}>
-      <div className={sBaseNavigation}>
+      {isSidebarOpen && (
+        <button
+          type="button"
+          className={sBaseSidebarOverlay}
+          onClick={() => setIsSidebarOpen(false)}
+          aria-label="Close sidebar"
+        />
+      )}
+      <div className={`${sBaseNavigation} ${isSidebarOpen ? sBaseSidebarOpen : ''}`}>
         <div className={sBaseNavigationContent}>
           <div className={sBaseNavigationLogo}>
             <LogoSnaily />
@@ -83,6 +111,16 @@ const Base = ({ title, children }: BaseProps) => {
       </div>
       <div className={sBaseContent}>
         <div className={sBaseHeader}>
+          <button
+            type="button"
+            className={sBaseSidebarToggle}
+            onClick={() => setIsSidebarOpen((previous) => !previous)}
+            aria-label="Toggle sidebar"
+          >
+            <span className={sBaseSidebarToggleBar} />
+            <span className={sBaseSidebarToggleBar} />
+            <span className={sBaseSidebarToggleBar} />
+          </button>
           <PageTitle title={title} />
           <SelectChild />
         </div>

@@ -3,7 +3,7 @@ import React, { useState, useEffect, FormEvent } from 'react';
 
 import { axiosGet, axiosPut, displayErrorMessage } from '@/utils';
 import { zustand } from '@/services';
-import { LogActivity, StatisticMonth, StatisticYear, Summary } from '@/models';
+import { LogActivity, StatisticMonth, Summary } from '@/models';
 
 import DashboardViews from './views';
 import moment, { Moment, MomentInput } from 'moment';
@@ -22,10 +22,8 @@ const DashboardModule = () => {
     persentageSafeWebsite: 0,
     persentageDangerousWebsite: 0,
   });
-  const [listStatisticYear, setListStatisticYear] = useState<StatisticYear[]>([]);
   const [listStatisticMonth, setListStatisticMonth] = useState<StatisticMonth[]>([]);
   const [valueDate, setValueDate] = useState<MomentInput>(moment().format("YYYY-MM"));
-  const [valueYear, setValueYear] = useState<MomentInput>(moment().year().toString());
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [grantAccess, setGrantAccess] = useState<boolean>(false);
   const [url, setUrl] = useState<string>("");
@@ -44,7 +42,12 @@ const DashboardModule = () => {
         },
       });
       const summary = dataSummary.data.data;
-      setListOfSummary(summary);
+      setListOfSummary({
+        totalSafeWebsite: Number(summary?.totalSafeWebsite ?? summary?.totalSafeWebsites ?? 0),
+        totalDangerousWebsite: Number(summary?.totalDangerousWebsite ?? summary?.totalDangerousWebsites ?? 0),
+        persentageSafeWebsite: Number(summary?.persentageSafeWebsite ?? 0),
+        persentageDangerousWebsite: Number(summary?.persentageDangerousWebsite ?? 0),
+      });
     } catch (error) {
       displayErrorMessage(error, enqueueSnackbar);
     } finally {
@@ -65,26 +68,6 @@ const DashboardModule = () => {
       });
       const logActivities = dataLogActivity.data.data;
       setLogActivity(logActivities);
-    } catch (error) {
-      displayErrorMessage(error, enqueueSnackbar);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getStatisticByYear = async (year: any) => {
-    try {
-      const dataStatisticYear = await axiosGet(
-        `/log/statistic-year/${selectedChildId || 'ALL'}?year=${year}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.accessToken}`,
-          },
-        }
-      );
-
-      const statisticYear = dataStatisticYear.data.data;
-      setListStatisticYear(statisticYear);
     } catch (error) {
       displayErrorMessage(error, enqueueSnackbar);
     } finally {
@@ -149,11 +132,6 @@ const DashboardModule = () => {
     setValueDate(formatedDate);
   };
 
-  const yearChangeHandler = (date: Moment) => {
-    const formatedYear = date.format("YYYY");
-    setValueYear(formatedYear);
-  };
-
   
   useEffect(() => {
     getListSummary()
@@ -162,9 +140,8 @@ const DashboardModule = () => {
   
   useEffect(() => {
     getListSummary()
-    getStatisticByYear(valueYear)
     getStatisticByMonth(valueDate)
-  }, [valueYear, valueDate, selectedChildId])
+  }, [valueDate, selectedChildId])
 
   return (
     <DashboardViews
@@ -173,11 +150,8 @@ const DashboardModule = () => {
       logActivity={logActivity}
       listOfSummary={listOfSummary}
       listStatisticMonth={listStatisticMonth}
-      listStatisticYear={listStatisticYear}
       dateChangeHandler={dateChangeHandler}
-      yearChangeHandler={yearChangeHandler}
       date={valueDate}
-      year={valueYear}
       logId={logId}
       url={url}
       setLogId={setLogId}

@@ -2,7 +2,7 @@ import { css } from '@emotion/css';
 
 export const sSelectChildWrapper = css`
   position: relative;
-  z-index: 20;
+  z-index: 999;
 `;
 
 export const sSelectChildBoxContainer = css`

@@ -207,14 +207,33 @@ class LogController extends Controller
             ->whereMonth('created_at', $month)
             ->get();
 
-        $totals = $this->countGoodBad($logs);
+        $daysInMonth = Carbon::create($year, $month, 1)->daysInMonth;
+        $summaryByDay = [];
+
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $summaryByDay[$day] = ['good' => 0, 'bad' => 0];
+        }
+
+        foreach ($logs as $log) {
+            $status = $this->resolveStatus($log);
+            $day = $log->created_at?->day ?? null;
+
+            if ($day && $status === 'good') {
+                $summaryByDay[$day]['good']++;
+            } elseif ($day && $status === 'bad') {
+                $summaryByDay[$day]['bad']++;
+            }
+        }
 
         return response()->json([
             'message' => 'Statistic month fetched',
-            'data' => [
-                ['name' => 'Good', 'value' => $totals['good']],
-                ['name' => 'Bad', 'value' => $totals['bad']],
-            ],
+            'data' => array_map(function (array $counts, int $day) {
+                return [
+                    'day' => (string) $day,
+                    'Good' => $counts['good'],
+                    'Bad' => $counts['bad'],
+                ];
+            }, $summaryByDay, array_keys($summaryByDay)),
         ]);
     }
 
@@ -254,7 +273,7 @@ class LogController extends Controller
         ];
     }
 
-    private function resolveStatus(Log $log): ?string
+    private function resolveStatus($log): ?string
     {
         if ($log->grant_access === true) {
             return 'good';

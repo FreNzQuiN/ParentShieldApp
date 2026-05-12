@@ -20,12 +20,14 @@ export const getStatusComponent = (item: any) => {
 
 
 export const calculateGoodPercentage = (data: any) => {
-  // Hitung total nilai dari semua data
-  const totalValue = data.reduce((total, item) => total + item.value, 0);
+  const totalValue = data.reduce((total, item) => total + (Number(item.value) || 0), 0);
 
-  // Hitung persentase konten "Good"
+  if (!totalValue) {
+    return '0';
+  }
+
   const goodItem = data.find((item) => item.name === 'Good');
-  const goodPercentage = (goodItem?.value / totalValue) * 100;
+  const goodPercentage = ((Number(goodItem?.value) || 0) / totalValue) * 100;
 
   return goodPercentage.toFixed();
 };

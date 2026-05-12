@@ -10,6 +10,7 @@ export const sModal = css`
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 1000;
 
     padding: 24px;
 
