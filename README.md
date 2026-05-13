@@ -49,11 +49,10 @@ Make sure you have the following installed on your local machine:
 ```
 
 2. **Install PHP Dependencies:**
-   ```bash
-   composer install
+```bash
+composer install
 
 ```
-
 
 3. **Install JavaScript/React Dependencies:**
 ```bash
