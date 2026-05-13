@@ -49,7 +49,8 @@ Make sure you have the following installed on your local machine:
 ```
 
 2. **Install PHP Dependencies:**
-composer install
+   ```bash
+   composer install
 
 ```
 
