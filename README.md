@@ -47,6 +47,7 @@ Make sure you have the following installed on your local machine:
    cd ParentShieldApp
 
 ```
+```
 
 2. **Install PHP Dependencies:**
 ```bash
